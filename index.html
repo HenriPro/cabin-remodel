@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Cabin remodel task map — dependencies and illustrative Gantt." />
+  <meta name="theme-color" content="#3f6212" />
   <title>Cabin remodel · task map</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,38 +24,58 @@
       --radius: 12px;
       --font: "DM Sans", system-ui, sans-serif;
       --display: "Instrument Serif", Georgia, serif;
+      --tap: 48px;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
 
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh;
       font-family: var(--font);
-      font-size: 1rem;
+      font-size: 1.0625rem;
       line-height: 1.55;
       color: var(--ink);
       background: var(--bg);
       background-image:
         radial-gradient(ellipse 120% 80% at 100% -20%, rgba(63, 98, 18, 0.07), transparent 50%),
         radial-gradient(ellipse 80% 60% at -10% 100%, rgba(120, 113, 108, 0.05), transparent 45%);
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    body.sheet-open {
+      overflow: hidden;
     }
 
     .wrap {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
+      padding: 1.25rem 1rem 2.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .wrap { padding: 2rem 1.25rem 3rem; }
+      body { font-size: 1rem; }
     }
 
     header {
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
       border-bottom: 1px solid var(--border);
+    }
+
+    @media (min-width: 640px) {
+      header { margin-bottom: 2rem; padding-bottom: 1.5rem; }
     }
 
     header h1 {
       font-family: var(--display);
-      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-size: clamp(1.65rem, 5.5vw, 2.25rem);
       font-weight: 400;
       letter-spacing: -0.02em;
       margin: 0 0 0.4rem;
@@ -64,65 +85,380 @@
       margin: 0;
       max-width: 36rem;
       color: var(--muted);
+      font-size: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .lede { font-size: 1.02rem; }
     }
 
     nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem 1.25rem;
-      margin-top: 1rem;
+      gap: 0.35rem 1rem;
+      margin-top: 0.85rem;
     }
 
     nav a {
       color: var(--accent);
-      font-weight: 500;
-      font-size: 0.9rem;
+      font-weight: 600;
+      font-size: 0.95rem;
       text-decoration: none;
+      padding: 0.35rem 0;
+      min-height: var(--tap);
+      display: inline-flex;
+      align-items: center;
     }
 
-    nav a:hover { text-decoration: underline; }
+    nav a:hover, nav a:focus-visible { text-decoration: underline; }
 
     section {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 1.35rem 1.25rem 1.5rem;
-      margin-bottom: 1.5rem;
+      padding: 1.1rem 0.95rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 640px) {
+      section { padding: 1.35rem 1.25rem 1.5rem; margin-bottom: 1.5rem; }
     }
 
     section h2 {
       font-family: var(--display);
-      font-size: 1.35rem;
+      font-size: clamp(1.2rem, 4vw, 1.35rem);
       font-weight: 400;
       margin: 0 0 0.35rem;
     }
 
     .note {
-      margin: 0 0 1rem;
-      padding: 0.65rem 0.9rem;
+      margin: 0 0 0.85rem;
+      padding: 0.65rem 0.85rem;
       background: var(--note-bg);
       border: 1px solid var(--note-border);
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--note-ink);
+      line-height: 1.45;
+    }
+
+    @media (min-width: 640px) {
+      .note { font-size: 0.9rem; padding: 0.65rem 0.9rem; }
     }
 
     .note strong { font-weight: 600; }
 
-    .mermaid {
+    .diagram-wrap {
       margin-top: 0.35rem;
-      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-left: -0.25rem;
+      margin-right: -0.25rem;
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+    }
+
+    .diagram-wrap p.hint {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    @media (min-width: 640px) {
+      .diagram-wrap p.hint { display: none; }
+    }
+
+    .diagram-zoom {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #faf8f5;
+      overflow: hidden;
+    }
+
+    .diagram-zoom-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 0.5rem;
+      padding: 0.45rem 0.55rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+
+    .diagram-zoom-toolbar .dz-level {
+      font-size: 0.82rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      min-width: 2.75rem;
+      text-align: center;
+    }
+
+    .diagram-zoom-toolbar button {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1;
+      min-height: var(--tap);
+      min-width: var(--tap);
+      padding: 0 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .diagram-zoom-toolbar button:hover,
+    .diagram-zoom-toolbar button:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+      outline: none;
+    }
+
+    .diagram-zoom-toolbar .dz-reset {
+      min-width: auto;
+      padding: 0 0.85rem;
+      font-size: 0.88rem;
+      margin-left: auto;
+    }
+
+    @media (min-width: 640px) {
+      .diagram-zoom-toolbar .dz-reset { margin-left: 0; }
+    }
+
+    .diagram-zoom-viewport {
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: min(78vh, 880px);
+      padding: 0.5rem;
+      touch-action: pan-x pan-y;
+    }
+
+    .diagram-zoom-content {
+      display: inline-block;
+      vertical-align: top;
+      transform-origin: 0 0;
+      transition: transform 0.12s ease-out;
+    }
+
+    .diagram-zoom-content.is-pinching {
+      transition: none;
     }
 
     .mermaid svg {
-      max-width: 100%;
+      max-width: none;
+      min-width: min(100%, 720px);
       height: auto;
+    }
+
+    @media (min-width: 640px) {
+      .mermaid svg { max-width: 100%; min-width: 0; }
+    }
+
+    .mermaid g.node.interactive { cursor: pointer; }
+    .mermaid g.node.interactive rect,
+    .mermaid g.node.interactive polygon,
+    .mermaid g.node.interactive circle { stroke-width: 2px !important; }
+
+    /* Gantt bars */
+    .mermaid .grid .tick line { stroke: var(--border); }
+    .mermaid g rect.task { cursor: pointer; }
+    .mermaid g rect.task:hover { opacity: 0.92; }
+
+    /* Task browser (phone fallback) */
+    #task-browser {
+      margin-top: 0.75rem;
+    }
+
+    #task-browser summary {
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 0.65rem 0;
+      min-height: var(--tap);
+      display: flex;
+      align-items: center;
+      list-style: none;
+    }
+
+    #task-browser summary::-webkit-details-marker { display: none; }
+
+    .task-browser-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0 0 0.5rem;
+      list-style: none;
+    }
+
+    .task-browser-list button {
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      font-size: 0.95rem;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--ink);
+      cursor: pointer;
+      min-height: var(--tap);
+    }
+
+    .task-browser-list button:active {
+      background: #e7e5e4;
+    }
+
+    .task-browser-list .phase {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin: 0.75rem 0 0.25rem;
+    }
+
+    /* Detail sheet */
+    #detail-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 25, 23, 0.45);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    #detail-backdrop.visible {
+      display: block;
+      opacity: 1;
+    }
+
+    #detail-sheet {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-height: min(88vh, 640px);
+      background: var(--card);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
+      padding: 0.5rem 1rem calc(1rem + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.25s ease;
+    }
+
+    @media (min-width: 640px) {
+      #detail-sheet {
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        top: 50%;
+        width: min(440px, 92vw);
+        max-height: min(80vh, 560px);
+        border-radius: var(--radius);
+        transform: translate(-50%, -50%) scale(0.96);
+        opacity: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+    }
+
+    #detail-sheet.visible {
+      display: block;
+      transform: translateY(0);
+    }
+
+    @media (min-width: 640px) {
+      #detail-sheet.visible {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    #detail-sheet .sheet-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.5rem 0 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #detail-sheet h3 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      line-height: 1.25;
+    }
+
+    #detail-sheet .phase-tag {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-top: 0.25rem;
+    }
+
+    #detail-close {
+      flex-shrink: 0;
+      width: var(--tap);
+      height: var(--tap);
+      border: none;
+      border-radius: 10px;
+      background: var(--bg);
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    #detail-close:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    #detail-body {
+      overflow-y: auto;
+      max-height: calc(min(88vh, 640px) - 120px);
+      padding: 1rem 0 0.25rem;
+      font-size: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      #detail-body { max-height: min(60vh, 420px); }
+    }
+
+    #detail-body ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    #detail-body li {
+      margin-bottom: 0.5rem;
+    }
+
+    #detail-body .empty {
+      color: var(--muted);
     }
 
     @media print {
       body { background: #fff; }
       section { box-shadow: none; break-inside: avoid; }
+      #detail-backdrop, #detail-sheet, #task-browser,
+      .diagram-zoom-toolbar { display: none !important; }
+
+      .diagram-zoom-viewport {
+        max-height: none;
+        overflow: visible;
+      }
+
+      .diagram-zoom-content { transform: none !important; }
     }
   </style>
 </head>
@@ -130,17 +466,29 @@
   <div class="wrap">
     <header>
       <h1>Cabin remodel</h1>
-      <p class="lede">Task dependencies by area. Diagrams use Mermaid (loaded from jsDelivr).</p>
+      <p class="lede">Task order by area. Tap a box in the flowchart or a bar in the Gantt for scope notes—or use the task list on small screens.</p>
       <nav aria-label="Sections">
         <a href="#flowchart">Flowchart</a>
         <a href="#gantt">Gantt</a>
+        <a href="#task-browser">Task list</a>
       </nav>
     </header>
 
     <section id="flowchart">
       <h2>Flowchart</h2>
-      <p class="note"><strong>How to read it.</strong> Solid arrows = order. Dashed = can overlap or coordinate. Flexible group: subpanel first when adding new circuits.</p>
-      <div class="mermaid">
+      <p class="note"><strong>How to read it.</strong> Solid arrows = order. Dashed = can overlap. Tap any task box for scope. Subpanel first when adding new circuits.</p>
+      <div class="diagram-wrap">
+        <p class="hint">Use +/− or pinch to zoom, then scroll the chart to move around. On a computer, Ctrl+scroll while over the chart zooms.</p>
+        <div class="diagram-zoom" data-diagram-zoom>
+          <div class="diagram-zoom-toolbar" role="toolbar" aria-label="Flowchart zoom">
+            <button type="button" class="dz-out" aria-label="Zoom out">−</button>
+            <span class="dz-level" aria-live="polite">100%</span>
+            <button type="button" class="dz-in" aria-label="Zoom in">+</button>
+            <button type="button" class="dz-reset">Reset</button>
+          </div>
+          <div class="diagram-zoom-viewport">
+            <div class="diagram-zoom-content">
+        <div class="mermaid" id="mermaid-flow">
 %%{init: {"flowchart": {"htmlLabels": true, "padding": 20, "nodeSpacing": 55, "rankSpacing": 50}}}%%
 flowchart TB
     subgraph P1["1 · Dry crawlspace"]
@@ -270,13 +618,28 @@ flowchart TB
     SP --> KSVC
     SP --> BFAN
     F0 -.->|parallel OK| EL1
+        </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section id="gantt">
       <h2>Gantt (illustrative)</h2>
-      <p class="note"><strong>Not a real schedule.</strong> The timeline axis is arbitrary. Bar length ≈ relative effort. Same starting dependency = work that may run in parallel.</p>
-      <div class="mermaid">
+      <p class="note"><strong>Not a real schedule.</strong> Timeline is arbitrary. Bar length ≈ relative effort. Tap a bar for the same scope notes as the flowchart where they match.</p>
+      <div class="diagram-wrap">
+        <p class="hint">Zoom with +/− or pinch, then scroll to pan the Gantt.</p>
+        <div class="diagram-zoom" data-diagram-zoom>
+          <div class="diagram-zoom-toolbar" role="toolbar" aria-label="Gantt zoom">
+            <button type="button" class="dz-out" aria-label="Zoom out">−</button>
+            <span class="dz-level" aria-live="polite">100%</span>
+            <button type="button" class="dz-in" aria-label="Zoom in">+</button>
+            <button type="button" class="dz-reset">Reset</button>
+          </div>
+          <div class="diagram-zoom-viewport">
+            <div class="diagram-zoom-content">
+        <div class="mermaid" id="mermaid-gantt">
 gantt
     title Rough order only — not real dates
     dateFormat YYYY-MM-DD
@@ -323,21 +686,410 @@ gantt
     Kitchen faucet          :k_ft, after k2 after k_sink, 5d
     Backsplash              :k3, after k_ft, 21d
     Dishwasher              :k4, after k2, 10d
+        </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
+
+    <section id="task-browser-section" aria-labelledby="task-browser-heading">
+      <h2 id="task-browser-heading">All tasks</h2>
+      <p class="note">Same details as tapping the diagrams—useful on a phone if the chart is crowded.</p>
+      <details id="task-browser" open>
+        <summary>Browse by name</summary>
+        <ul class="task-browser-list" id="task-browser-list"></ul>
+      </details>
     </section>
   </div>
 
+  <div id="detail-backdrop" aria-hidden="true"></div>
+  <div id="detail-sheet" role="dialog" aria-modal="true" aria-labelledby="detail-title" hidden>
+    <div class="sheet-head">
+      <div>
+        <h3 id="detail-title">Task</h3>
+        <span class="phase-tag" id="detail-phase"></span>
+      </div>
+      <button type="button" id="detail-close" aria-label="Close">×</button>
+    </div>
+    <div id="detail-body"></div>
+  </div>
+
   <script type="module">
+    /** Gantt task ids → flowchart node id (when they describe the same work) */
+    const GANTT_TO_FLOW = {
+      sp: "SP",
+      el1: "EL1",
+      wp: "WPLUMB",
+      wcirc: "WELEC",
+      c1: "C1",
+      d1: "E1",
+      d2: "E2",
+      d3: "E3",
+      ou: "OUT",
+      ba: "F6",
+      bb: "TUB",
+      bc: "F7",
+      bd: "F8",
+      be: "BWT",
+      bg: "BVF",
+      bf: "SD",
+      bfan: "BFAN",
+      e2: "F3",
+      e3: "F5",
+      cs0: "CS0",
+      chim: "CHIM",
+      cs1: "CS1",
+      cs2: "CS2",
+      lg: "LGT",
+      k1: "K1",
+      k_elec: "KSVC",
+      k2: "CTOP",
+      k_sink: "KSINK",
+      k_ft: "FAUCET",
+      k3: "BACK",
+      k4: "DW",
+    };
+
+    const TASKS = {
+      D1: { title: "Drainage (if needed)", phase: "Dry crawlspace", scope: ["French drain, daylighting, or crawl perimeter drains as designed", "Slope and discharge away from foundation", "May pair with grading outside"] },
+      D2: { title: "Sump pump (if needed)", phase: "Dry crawlspace", scope: ["Basin, pump, and discharge plumbing", "GFCI and dedicated circuit if required by code", "Test alarm / backup if you add one"] },
+      W1: { title: "Replace joists", phase: "Structure", scope: ["Sister or full replace where rot or overload", "Match span tables / engineer if spans change", "Temporary shoring before cuts"] },
+      W2: { title: "Replace rim joist", phase: "Structure", scope: ["Rim / band joist tied to floor and wall loads", "Air seal and tie-in to future encapsulation", "Watch wall sheathing attachment"] },
+      W3: { title: "Beams & piers level", phase: "Structure", scope: ["Mid-span sag, pier height, shims or new posts", "Load path to footing or pad", "Level reference for subfloor above"] },
+      WPLUMB: { title: "Washer water & drain", phase: "Crawl utilities", scope: ["Hot/cold supplies and standpipe or laundry box", "Trap and vent to code", "Only after structural wood in crawl is done"] },
+      WELEC: { title: "Washer new circuit", phase: "Crawl utilities", scope: ["Dedicated 20A typical; AFCI/GFCI per local code", "Requires new subpanel if you are out of spaces", "Pull after crawl wood work for routing"] },
+      C1: { title: "Pour or cap rubble areas", phase: "Slab / stone", scope: ["Low spots or old dig areas in crawl", "Stable surface before dimple mat / liner", "Optional—not every crawl needs it"] },
+      E1: { title: "Mat + vapor barrier", phase: "Encapsulation", scope: ["Dimple mat on floor if using that system", "Sealed vapor barrier on floor and up walls", "Overlap and tape per manufacturer"] },
+      E2: { title: "Wall insulation", phase: "Encapsulation", scope: ["Rigid or batt on crawl walls per climate zone", "Thermal boundary aligned with air barrier", "Fire / facing requirements"] },
+      E3: { title: "Dehumidifier & seal vents", phase: "Encapsulation", scope: ["Sized for crawl volume", "Condensate drain or pump", "Block old vents; air seal rim details"] },
+      F0: { title: "Crawlspace closed — floors can open", phase: "Main floors", scope: ["Encapsulation complete enough to work from above", "Floor hatches or cuts as needed for remaining work", "Moisture under control before wood repairs above"] },
+      F1: { title: "Strip extra kitchen layers", phase: "Main floors", scope: ["Remove doubled-up plywood or bad patches", "Expose fir for assessment", "Bag debris; control dust"] },
+      F2: { title: "Fir patches", phase: "Main floors", scope: ["Replace boards where missing or damaged", "Glue/screw to joists; plane transitions", "Acclimate stock before install"] },
+      F3: { title: "Sand & refinish wood floors", phase: "Main floors", scope: ["Full sand sequence or screen-and-coat if appropriate", "Stain / seal / poly or oil—match existing tone", "Coordinate with bath tile heights at doorways"] },
+      F4: { title: "Prep · interior door tile", phase: "Main floors", scope: ["Underlayment / crack isolation as needed", "Layout for interior threshold only (not exterior door)", "Plan transition to wood"] },
+      F5: { title: "Tile · interior door", phase: "Main floors", scope: ["Install field and trim at interior door area", "Grout and cure before heavy traffic", "Protect during kitchen cabinet install"] },
+      F6: { title: "Strip bath subfloor (×2)", phase: "Bathroom", scope: ["Remove two layers down to joists or stable subfloor", "Inspect for rot; treat or replace", "Plan for tub drain location"] },
+      TUB: { title: "Install tub", phase: "Bathroom", scope: ["Set, level, and fasten tub", "Waste/overflow rough before close-in", "Fits between floor tile sequence and surround"] },
+      F7: { title: "Heat wire + prep", phase: "Bathroom", scope: ["Manufacturer layout; ohm test", "Self-leveler or thinset bed as specified", "GFCI protection planned"] },
+      F8: { title: "Bath floor tile", phase: "Bathroom", scope: ["Waterproofing at pan/walls as designed", "Slope to drain; grout and seal", "Cure before heavy surround work on walls"] },
+      BWT: { title: "Tub surround tile", phase: "Bathroom", scope: ["Backer board and waterproofing", "Field tile, niches, corners", "Silicone changes of plane"] },
+      SD: { title: "Shower door", phase: "Bathroom", scope: ["Measure after tile set", "Walls plumb; anchors into stud or blocking", "Sweep and hardware adjustment"] },
+      BFAN: { title: "Bath exhaust fan", phase: "Bathroom", scope: ["Duct to exterior (not attic)", "New or upgraded circuit from subpanel", "Timer or humidity control optional"] },
+      BVF: { title: "Vanity · toilet · bath trim", phase: "Bathroom", scope: ["Set vanity; drill for supplies", "Toilet flange and wax ring", "Accessories, mirror, caulking"] },
+      K1: { title: "Cabinets", phase: "Kitchen", scope: ["Base and wall per layout; dishwasher opening", "Level and screw to studs", "Templates for countertop shop"] },
+      KSVC: { title: "Kitchen circuits", phase: "Kitchen", scope: ["Counter outlets, range hood, dishwasher homeruns", "After subpanel upgrade if needed", "Rough before drywall patch if walls opened"] },
+      CTOP: { title: "Countertops", phase: "Kitchen", scope: ["Template after cabinets", "Fabrication lead time", "Install and seam; undermount sink coordination"] },
+      KSINK: { title: "Replace sink", phase: "Kitchen", scope: ["Same window as countertop template/install", "Faucet holes and accessories", "Connect trap after faucet if sequence requires"] },
+      FAUCET: { title: "Kitchen faucet", phase: "Kitchen", scope: ["After counter and sink set", "Supply lines; test for leaks", "Before backsplash if escutcheon overlaps tile"] },
+      BACK: { title: "Backsplash", phase: "Kitchen", scope: ["Tile, sheet, or panel to code height", "Outlets/switches extend or adjust boxes", "Seal to counter"] },
+      DW: { title: "Dishwasher", phase: "Kitchen", scope: ["Power, water, drain per install manual", "Anti-tip bracket; panel alignment", "After countertop; can parallel backsplash"] },
+      SP: { title: "New subpanel", phase: "Electrical (flexible)", scope: ["Service size and load calc if expanding", "Permit and inspection", "Do before new homeruns that need breakers"] },
+      EL1: { title: "Lights & switches rough-in", phase: "Electrical (flexible)", scope: ["Boxes and cable for ceiling/wall lighting", "Does not require new panel if extending existing", "Before shellac where cables enter ceiling cavity"] },
+      OUT: { title: "Outlets & devices", phase: "Electrical (flexible)", scope: ["Replace old devices; tighten boxes", "Can happen in many small visits", "GFCI/AFCI updates where required"] },
+      CHIM: { title: "Loft cedar chimney patch", phase: "Ceiling", scope: ["Patch old chimney penetration in loft", "Cedar for look and breathability where desired", "Before final ceiling shellac in that zone"] },
+      CS0: { title: "Sand ceiling prep", phase: "Ceiling", scope: ["Feather damaged shellac or bare wood", "Dust control; mask openings", "Prep for clean/polish step"] },
+      CS1: { title: "Clean ceiling (Bar Keepers Friend)", phase: "Ceiling", scope: ["Spot treatment per product directions", "Rinse/neutralize before coating", "Spot test finish compatibility"] },
+      CS2: { title: "Shellac ceiling", phase: "Ceiling", scope: ["Ventilation; thin coats", "After rough electrical and ceiling prep", "Cure before hanging some fixtures"] },
+      LGT: { title: "Install fixtures", phase: "Ceiling", scope: ["After shellac when you want finish safe", "Rough-in must be complete", "LED trims, globes, ceiling fans as planned"] },
+      a1: { title: "Drains + sump (Gantt bar)", phase: "Dry crawl", scope: ["One bar combining D1 + D2 in the chart", "See Drainage and Sump pump in the flowchart for scope"] },
+      b1: { title: "Joists, rim, piers (Gantt bar)", phase: "Structure", scope: ["One bar combining W1–W3 in the chart", "See individual structure boxes in the flowchart"] },
+      e1: { title: "Kitchen strip + fir (Gantt bar)", phase: "Main floors", scope: ["One bar combining F1 and F2 work in the chart", "Strip extra layers then fir patches—see flowchart"] },
+    };
+
+    const FLOW_NODE_RE = /^flowchart-([A-Za-z][A-Za-z0-9_]*)-\d+$/;
+
+    function openDetail(id) {
+      const resolved = GANTT_TO_FLOW[id] || id;
+      const t = TASKS[resolved] || TASKS[id];
+      const backdrop = document.getElementById("detail-backdrop");
+      const sheet = document.getElementById("detail-sheet");
+      const titleEl = document.getElementById("detail-title");
+      const phaseEl = document.getElementById("detail-phase");
+      const bodyEl = document.getElementById("detail-body");
+      document.body.classList.add("sheet-open");
+      sheet.hidden = false;
+      backdrop.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => {
+        backdrop.classList.add("visible");
+        sheet.classList.add("visible");
+      });
+      if (!t) {
+        titleEl.textContent = resolved !== id ? id + " → " + resolved : id;
+        phaseEl.textContent = "";
+        bodyEl.innerHTML = "<p class=\"empty\">No extra notes for this item yet.</p>";
+        return;
+      }
+      titleEl.textContent = t.title;
+      phaseEl.textContent = t.phase;
+      bodyEl.innerHTML = "<ul>" + t.scope.map((s) => "<li>" + escapeHtml(s) + "</li>").join("") + "</ul>";
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    }
+
+    function closeDetail() {
+      const backdrop = document.getElementById("detail-backdrop");
+      const sheet = document.getElementById("detail-sheet");
+      backdrop.classList.remove("visible");
+      sheet.classList.remove("visible");
+      document.body.classList.remove("sheet-open");
+      backdrop.setAttribute("aria-hidden", "true");
+      setTimeout(() => {
+        sheet.hidden = true;
+      }, 260);
+    }
+
+    function wireFlowchart(svg) {
+      if (!svg) return;
+      svg.querySelectorAll("g.node").forEach((g) => {
+        const m = (g.id || "").match(FLOW_NODE_RE);
+        if (!m || !TASKS[m[1]]) return;
+        g.classList.add("interactive");
+        g.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openDetail(m[1]);
+        });
+      });
+    }
+
+    function wireGantt(svg) {
+      if (!svg) return;
+      const wiredBars = new WeakSet();
+      svg.querySelectorAll("text").forEach((textEl) => {
+        const raw = (textEl.textContent || "").replace(/\s+/g, " ").trim();
+        const id = GANTT_LABEL_TO_ID[raw];
+        if (!id) return;
+        const resolved = GANTT_TO_FLOW[id] || id;
+        if (!TASKS[resolved] && !TASKS[id]) return;
+        textEl.style.cursor = "pointer";
+        const open = () => openDetail(id);
+        textEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          open();
+        });
+        let g = textEl.parentElement;
+        for (let i = 0; i < 6 && g; i++) {
+          g.querySelectorAll("rect").forEach((bar) => {
+            if (wiredBars.has(bar)) return;
+            const w = parseFloat(bar.getAttribute("width") || "0");
+            if (w < 8) return;
+            wiredBars.add(bar);
+            bar.style.cursor = "pointer";
+            bar.addEventListener("click", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              open();
+            });
+          });
+          g = g.parentElement;
+        }
+      });
+    }
+
+    const GANTT_LABEL_TO_ID = {
+      "Drains + sump": "a1",
+      "Subpanel": "sp",
+      "Joists rim piers": "b1",
+      "Washer plumbing": "wp",
+      "Concrete / cap rubble": "c1",
+      "Washer circuit": "wcirc",
+      "Mat + barrier": "d1",
+      "Wall insulation": "d2",
+      "Dehu + seal vents": "d3",
+      "Lights rough-in": "el1",
+      "Kitchen strip + fir": "e1",
+      "Outlets refresh": "ou",
+      "Strip bath floors": "ba",
+      "New tub": "bb",
+      "Heat wire prep": "bc",
+      "Bath floor tile": "bd",
+      "Surround tile": "be",
+      "Vanity + toilet": "bg",
+      "Shower door": "bf",
+      "Bath exhaust fan": "bfan",
+      "Sand + refinish": "e2",
+      "Interior door tile": "e3",
+      "Sand ceiling": "cs0",
+      "Cedar chimney patch": "chim",
+      "Ceiling clean BKF": "cs1",
+      "Shellac": "cs2",
+      "Hang lights": "lg",
+      "Cabinets": "k1",
+      "Kitchen new circuits": "k_elec",
+      "Countertops": "k2",
+      "Replace kitchen sink": "k_sink",
+      "Kitchen faucet": "k_ft",
+      "Backsplash": "k3",
+      "Dishwasher": "k4",
+    };
+
+    function buildTaskList() {
+      const ul = document.getElementById("task-browser-list");
+      const flowOrder = [
+        "D1", "D2", "W1", "W2", "W3", "WPLUMB", "WELEC", "C1", "E1", "E2", "E3",
+        "F0", "F1", "F2", "F3", "F4", "F5", "F6", "TUB", "F7", "F8", "BWT", "SD", "BFAN", "BVF",
+        "K1", "KSVC", "CTOP", "KSINK", "FAUCET", "BACK", "DW", "SP", "EL1", "OUT",
+        "CHIM", "CS0", "CS1", "CS2", "LGT",
+      ];
+      let lastPhase = "";
+      flowOrder.forEach((id) => {
+        const t = TASKS[id];
+        if (!t) return;
+        if (t.phase !== lastPhase) {
+          lastPhase = t.phase;
+          const ph = document.createElement("li");
+          ph.className = "phase";
+          ph.textContent = t.phase;
+          ul.appendChild(ph);
+        }
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = t.title;
+        btn.addEventListener("click", () => openDetail(id));
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+    }
+
+    document.getElementById("detail-close").addEventListener("click", closeDetail);
+    document.getElementById("detail-backdrop").addEventListener("click", closeDetail);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeDetail();
+    });
+
+    function initDiagramZooms() {
+      const MIN = 0.4;
+      const MAX = 2.75;
+      const STEP = 1.18;
+
+      function touchDist(a, b) {
+        const dx = a.clientX - b.clientX;
+        const dy = a.clientY - b.clientY;
+        return Math.hypot(dx, dy);
+      }
+
+      document.querySelectorAll("[data-diagram-zoom]").forEach((root) => {
+        const viewport = root.querySelector(".diagram-zoom-viewport");
+        const content = root.querySelector(".diagram-zoom-content");
+        const levelEl = root.querySelector(".dz-level");
+        if (!viewport || !content || !levelEl) return;
+
+        let scale = 1;
+        let pinchStartDist = 0;
+        let pinchStartScale = 1;
+
+        function clamp(s) {
+          return Math.min(MAX, Math.max(MIN, s));
+        }
+
+        function setLabel() {
+          levelEl.textContent = Math.round(scale * 100) + "%";
+        }
+
+        function applyTransform() {
+          content.style.transform = "scale(" + scale + ")";
+          setLabel();
+        }
+
+        root.querySelector(".dz-in")?.addEventListener("click", () => {
+          scale = clamp(scale * STEP);
+          applyTransform();
+        });
+        root.querySelector(".dz-out")?.addEventListener("click", () => {
+          scale = clamp(scale / STEP);
+          applyTransform();
+        });
+        root.querySelector(".dz-reset")?.addEventListener("click", () => {
+          scale = 1;
+          applyTransform();
+          viewport.scrollLeft = 0;
+          viewport.scrollTop = 0;
+        });
+
+        viewport.addEventListener(
+          "wheel",
+          (e) => {
+            if (!e.ctrlKey && !e.metaKey) return;
+            e.preventDefault();
+            scale = clamp(scale * (e.deltaY > 0 ? 1 / STEP : STEP));
+            content.classList.add("is-pinching");
+            applyTransform();
+            requestAnimationFrame(() => content.classList.remove("is-pinching"));
+          },
+          { passive: false }
+        );
+
+        viewport.addEventListener(
+          "touchstart",
+          (e) => {
+            if (e.touches.length === 2) {
+              pinchStartDist = touchDist(e.touches[0], e.touches[1]);
+              pinchStartScale = scale;
+              content.classList.add("is-pinching");
+            }
+          },
+          { passive: true }
+        );
+
+        viewport.addEventListener(
+          "touchmove",
+          (e) => {
+            if (e.touches.length !== 2 || pinchStartDist <= 0) return;
+            e.preventDefault();
+            const d = touchDist(e.touches[0], e.touches[1]);
+            scale = clamp(pinchStartScale * (d / pinchStartDist));
+            content.style.transform = "scale(" + scale + ")";
+            setLabel();
+          },
+          { passive: false }
+        );
+
+        function endPinch() {
+          if (pinchStartDist <= 0) return;
+          pinchStartDist = 0;
+          content.classList.remove("is-pinching");
+        }
+
+        viewport.addEventListener("touchend", endPinch);
+        viewport.addEventListener("touchcancel", endPinch);
+
+        setLabel();
+      });
+    }
+
+    const mobile = window.matchMedia("(max-width: 639px)").matches;
     import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
     mermaid.initialize({
       startOnLoad: false,
       theme: "neutral",
       securityLevel: "loose",
-      flowchart: { htmlLabels: true, padding: 20, nodeSpacing: 55, rankSpacing: 50 },
-      gantt: { barHeight: 22, barGap: 8, topPadding: 48 },
-      themeVariables: { fontSize: "13px", lineColor: "#78716c" },
+      flowchart: {
+        htmlLabels: true,
+        padding: mobile ? 12 : 20,
+        nodeSpacing: mobile ? 38 : 55,
+        rankSpacing: mobile ? 40 : 50,
+      },
+      gantt: { barHeight: mobile ? 26 : 22, barGap: mobile ? 10 : 8, topPadding: 48 },
+      themeVariables: {
+        fontSize: mobile ? "12px" : "13px",
+        lineColor: "#78716c",
+      },
     });
+
     await mermaid.run({ querySelector: ".mermaid" });
+
+    initDiagramZooms();
+
+    const svgs = document.querySelectorAll(".mermaid svg");
+    if (svgs[0]) wireFlowchart(svgs[0]);
+    if (svgs[1]) wireGantt(svgs[1]);
+
+    buildTaskList();
   </script>
 </body>
 </html>

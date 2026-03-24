@@ -3,7 +3,7 @@
 **If the diagrams below show as code blocks:** Cursor’s default Markdown preview does not run Mermaid. Use either:
 
 1. Install the extension **Markdown Preview Mermaid Support** (or **Mermaid Preview**), then open Markdown preview, or  
-2. Open **`index.html`** in your browser (offline-friendly after first load).
+2. Open **`index.html`** in your browser. On the live page you can **tap any flowchart box or Gantt label/bar** for scope notes, or use the **task list** at the bottom (good on phones).
 
 The flowchart uses **line breaks** in labels (`<br/>`). If preview strips them, open the HTML file or set Mermaid `securityLevel: loose` in your preview settings.
 
