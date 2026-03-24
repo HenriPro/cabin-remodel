@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Cabin remodel task map — dependencies and illustrative Gantt." />
+  <title>Cabin remodel · task map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --card: #fffcfa;
+      --ink: #1c1917;
+      --muted: #57534e;
+      --border: #e7e2dc;
+      --accent: #3f6212;
+      --note-bg: #ecfccb;
+      --note-border: #d9f99d;
+      --note-ink: #365314;
+      --shadow: 0 1px 3px rgba(28, 25, 23, 0.06), 0 8px 24px rgba(28, 25, 23, 0.04);
+      --radius: 12px;
+      --font: "DM Sans", system-ui, sans-serif;
+      --display: "Instrument Serif", Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      font-size: 1rem;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 120% 80% at 100% -20%, rgba(63, 98, 18, 0.07), transparent 50%),
+        radial-gradient(ellipse 80% 60% at -10% 100%, rgba(120, 113, 108, 0.05), transparent 45%);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-family: var(--display);
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.4rem;
+    }
+
+    .lede {
+      margin: 0;
+      max-width: 36rem;
+      color: var(--muted);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      margin-top: 1rem;
+    }
+
+    nav a {
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.35rem 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    section h2 {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      margin: 0 0 0.35rem;
+    }
+
+    .note {
+      margin: 0 0 1rem;
+      padding: 0.65rem 0.9rem;
+      background: var(--note-bg);
+      border: 1px solid var(--note-border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--note-ink);
+    }
+
+    .note strong { font-weight: 600; }
+
+    .mermaid {
+      margin-top: 0.35rem;
+      overflow-x: auto;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media print {
+      body { background: #fff; }
+      section { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Cabin remodel</h1>
+      <p class="lede">Task dependencies by area. Diagrams use Mermaid (loaded from jsDelivr).</p>
+      <nav aria-label="Sections">
+        <a href="#flowchart">Flowchart</a>
+        <a href="#gantt">Gantt</a>
+      </nav>
+    </header>
+
+    <section id="flowchart">
+      <h2>Flowchart</h2>
+      <p class="note"><strong>How to read it.</strong> Solid arrows = order. Dashed = can overlap or coordinate. Flexible group: subpanel first when adding new circuits.</p>
+      <div class="mermaid">
+%%{init: {"flowchart": {"htmlLabels": true, "padding": 20, "nodeSpacing": 55, "rankSpacing": 50}}}%%
+flowchart TB
+    subgraph P1["1 · Dry crawlspace"]
+        direction LR
+        D1["Drainage<br/>if needed"]
+        D2["Sump pump<br/>if needed"]
+        D1 --- D2
+    end
+
+    subgraph P2["2 · Framing & structure"]
+        direction TB
+        W1["Replace joists"]
+        W2["Replace rim joist"]
+        W3["Beams & piers level"]
+        W1 -.->|same crew| W2
+        W1 -.->|same phase| W3
+        W2 -.->|same phase| W3
+    end
+
+    subgraph P2U["Washer · rough utilities"]
+        WPLUMB["Washer water<br/>& drain"]
+        WELEC["Washer ·<br/>new circuit"]
+    end
+
+    subgraph P3["3 · Slab / stone<br/>if needed"]
+        C1["Pour or cap<br/>rubble areas"]
+    end
+
+    subgraph P4["4 · Encapsulation"]
+        direction TB
+        E1["Mat + vapor<br/>barrier"]
+        E2["Wall insulation"]
+        E3["Dehumidifier<br/>seal vents"]
+        E1 --> E2
+        E1 --> E3
+    end
+
+    subgraph P5["5 · Kitchen & main floors"]
+        direction TB
+        F0["Crawlspace closed<br/>floors can open"]
+        F1["Strip extra<br/>kitchen layers"]
+        F2["Fir patches"]
+        F3["Sand & refinish<br/>wood floors"]
+        F4["Prep · door tile"]
+        F5["Tile · interior door"]
+
+        F0 --> F1
+        F1 --> F2
+        F2 --> F3
+        F2 --> F4
+        F4 --> F5
+        F3 -.->|meet at transition| F5
+    end
+
+    subgraph P5B["5B · Bathroom"]
+        direction TB
+        F6["Strip bath<br/>subfloor ×2"]
+        TUB["Install tub"]
+        F7["Heat wire + prep"]
+        F8["Bath floor tile"]
+        BWT["Tub surround tile"]
+        SD["Shower door"]
+        BFAN["Bath exhaust fan"]
+        BVF["Vanity · toilet · bath trim"]
+
+        F6 --> TUB
+        TUB --> F7
+        F7 --> F8
+        F8 --> BWT
+        BWT --> SD
+        SD --> BFAN
+        F8 --> BVF
+    end
+
+    subgraph P6["6 · Kitchen finish"]
+        K1["Cabinets<br/>(dishwasher space)"]
+        KSVC["Circuits · counter<br/>hood · DW"]
+        CTOP["Countertops"]
+        KSINK["Replace sink"]
+        FAUCET["Kitchen faucet"]
+        BACK["Backsplash"]
+        DW["Dishwasher"]
+        K1 --> KSVC
+        KSVC --> CTOP
+        KSVC --> KSINK
+        CTOP -.->|same template day| KSINK
+        CTOP --> FAUCET
+        KSINK --> FAUCET
+        FAUCET --> BACK
+        CTOP --> DW
+        KSVC --> DW
+    end
+
+    subgraph P9["Flexible timing · do subpanel first"]
+        SP["New subpanel"]
+        EL1["Lights & switches<br/>rough-in"]
+        OUT["Outlets · devices<br/>tighten boxes"]
+    end
+
+    subgraph P8["8 · Ceiling & lights"]
+        CHIM["Loft · cedar<br/>chimney patch"]
+        CS0["Sand ceiling"]
+        CS1["Clean ceiling<br/>Bar Keepers Friend"]
+        CS2["Shellac ceiling"]
+        LGT["Install fixtures"]
+        CS0 --> CS1
+        CHIM --> CS2
+        EL1 --> CS2
+        CS1 --> CS2
+        CS2 --> LGT
+        EL1 --> LGT
+    end
+
+    D1 --> W1
+    D2 --> W1
+    W3 --> C1
+    W3 --> WPLUMB
+    W3 --> WELEC
+    SP --> WELEC
+    C1 --> E1
+    E2 --> F0
+    E3 --> F0
+    F2 --> F6
+    F3 -.->|can overlap| F6
+    F3 --> K1
+    F5 --> K1
+    SP --> KSVC
+    SP --> BFAN
+    F0 -.->|parallel OK| EL1
+      </div>
+    </section>
+
+    <section id="gantt">
+      <h2>Gantt (illustrative)</h2>
+      <p class="note"><strong>Not a real schedule.</strong> The timeline axis is arbitrary. Bar length ≈ relative effort. Same starting dependency = work that may run in parallel.</p>
+      <div class="mermaid">
+gantt
+    title Rough order only — not real dates
+    dateFormat YYYY-MM-DD
+    section Dry crawl
+    Drains + sump           :a1, 2000-01-01, 36d
+    section After dry parallel
+    Subpanel                :sp, after a1, 14d
+    Joists rim piers        :b1, after a1, 84d
+    section Crawl parallel
+    Washer plumbing         :wp, after b1, 21d
+    Concrete / cap rubble   :c1, after b1, 28d
+    Washer circuit          :wcirc, after wp after sp, 14d
+    section Encapsulate
+    Mat + barrier           :d1, after c1 after wp, 14d
+    Wall insulation         :d2, after d1, 28d
+    Dehu + seal vents       :d3, after d2, 12d
+    section After encap parallel
+    Lights rough-in         :el1, after d3, 42d
+    Kitchen strip + fir     :e1, after d3, 48d
+    Outlets refresh         :ou, after d3, 21d
+    section Bathroom
+    Strip bath floors       :ba, after e1, 14d
+    New tub                 :bb, after ba, 24d
+    Heat wire prep          :bc, after bb, 14d
+    Bath floor tile         :bd, after bc, 24d
+    Surround tile           :be, after bd, 28d
+    Vanity + toilet         :bg, after bd, 24d
+    Shower door             :bf, after be, 12d
+    Bath exhaust fan        :bfan, after bf after sp, 10d
+    section Wood floors
+    Sand + refinish         :e2, after bfan after bg after bf, 42d
+    Interior door tile      :e3, after e2, 18d
+    section Ceiling
+    Sand ceiling            :cs0, after e3, 14d
+    Cedar chimney patch     :chim, after e3, 18d
+    Ceiling clean BKF       :cs1, after cs0 after chim, 12d
+    Shellac                 :cs2, after cs1 after el1 after chim, 18d
+    Hang lights             :lg, after cs2 after el1, 12d
+    section Kitchen
+    Cabinets                :k1, after lg, 56d
+    Kitchen new circuits    :k_elec, after k1 after sp, 18d
+    Countertops             :k2, after k_elec, 42d
+    Replace kitchen sink    :k_sink, after k_elec, 42d
+    Kitchen faucet          :k_ft, after k2 after k_sink, 5d
+    Backsplash              :k3, after k_ft, 21d
+    Dishwasher              :k4, after k2, 10d
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "neutral",
+      securityLevel: "loose",
+      flowchart: { htmlLabels: true, padding: 20, nodeSpacing: 55, rankSpacing: 50 },
+      gantt: { barHeight: 22, barGap: 8, topPadding: 48 },
+      themeVariables: { fontSize: "13px", lineColor: "#78716c" },
+    });
+    await mermaid.run({ querySelector: ".mermaid" });
+  </script>
+</body>
+</html>
