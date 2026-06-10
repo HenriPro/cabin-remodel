@@ -584,6 +584,7 @@ flowchart TB
 
     subgraph P9["Flexible timing · do subpanel first"]
         SP["New subpanel"]
+        MSPLIT["Mini split<br/>install"]
         EL1["Lights & switches<br/>rough-in"]
         OUT["Outlets · devices<br/>tighten boxes"]
     end
@@ -617,6 +618,7 @@ flowchart TB
     F5 --> K1
     SP --> KSVC
     SP --> BFAN
+    SP --> MSPLIT
     F0 -.->|parallel OK| EL1
         </div>
             </div>
@@ -647,6 +649,7 @@ gantt
     Drains + sump           :a1, 2000-01-01, 36d
     section After dry parallel
     Subpanel                :sp, after a1, 14d
+    Mini split install      :msplit, after sp, 10d
     Joists rim piers        :b1, after a1, 84d
     section Crawl parallel
     Washer plumbing         :wp, after b1, 21d
@@ -719,6 +722,7 @@ gantt
     /** Gantt task ids → flowchart node id (when they describe the same work) */
     const GANTT_TO_FLOW = {
       sp: "SP",
+      msplit: "MSPLIT",
       el1: "EL1",
       wp: "WPLUMB",
       wcirc: "WELEC",
@@ -785,6 +789,7 @@ gantt
       BACK: { title: "Backsplash", phase: "Kitchen", scope: ["Tile, sheet, or panel to code height", "Outlets/switches extend or adjust boxes", "Seal to counter"] },
       DW: { title: "Dishwasher", phase: "Kitchen", scope: ["Power, water, drain per install manual", "Anti-tip bracket; panel alignment", "After countertop; can parallel backsplash"] },
       SP: { title: "New subpanel", phase: "Electrical (flexible)", scope: ["Service size and load calc if expanding", "Permit and inspection", "Do before new homeruns that need breakers"] },
+      MSPLIT: { title: "Mini split install", phase: "Electrical (flexible)", scope: ["Line set, condenser pad, and dedicated circuit from subpanel", "Any time after subpanel—coordinate with HVAC crew", "Vacuum, charge, and startup per manufacturer"] },
       EL1: { title: "Lights & switches rough-in", phase: "Electrical (flexible)", scope: ["Boxes and cable for ceiling/wall lighting", "Does not require new panel if extending existing", "Before shellac where cables enter ceiling cavity"] },
       OUT: { title: "Outlets & devices", phase: "Electrical (flexible)", scope: ["Replace old devices; tighten boxes", "Can happen in many small visits", "GFCI/AFCI updates where required"] },
       CHIM: { title: "Loft cedar chimney patch", phase: "Ceiling", scope: ["Patch old chimney penetration in loft", "Cedar for look and breathability where desired", "Before final ceiling shellac in that zone"] },
@@ -893,6 +898,7 @@ gantt
     const GANTT_LABEL_TO_ID = {
       "Drains + sump": "a1",
       "Subpanel": "sp",
+      "Mini split install": "msplit",
       "Joists rim piers": "b1",
       "Washer plumbing": "wp",
       "Concrete / cap rubble": "c1",
@@ -932,7 +938,7 @@ gantt
       const flowOrder = [
         "D1", "D2", "W1", "W2", "W3", "WPLUMB", "WELEC", "C1", "E1", "E2", "E3",
         "F0", "F1", "F2", "F3", "F4", "F5", "F6", "TUB", "F7", "F8", "BWT", "SD", "BFAN", "BVF",
-        "K1", "KSVC", "CTOP", "KSINK", "FAUCET", "BACK", "DW", "SP", "EL1", "OUT",
+        "K1", "KSVC", "CTOP", "KSINK", "FAUCET", "BACK", "DW", "SP", "MSPLIT", "EL1", "OUT",
         "CHIM", "CS0", "CS1", "CS2", "LGT",
       ];
       let lastPhase = "";

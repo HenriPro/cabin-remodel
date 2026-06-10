@@ -107,6 +107,7 @@ flowchart TB
 
     subgraph P9["Flexible timing · do subpanel first"]
         SP["New subpanel"]
+        MSPLIT["Mini split<br/>install"]
         EL1["Lights & switches<br/>rough-in"]
         OUT["Outlets · devices<br/>tighten boxes"]
     end
@@ -155,6 +156,7 @@ gantt
     Drains + sump           :a1, 2000-01-01, 36d
     section After dry parallel
     Subpanel                :sp, after a1, 14d
+    Mini split install      :msplit, after sp, 10d
     Joists rim piers        :b1, after a1, 84d
     section Crawl parallel
     Washer plumbing         :wp, after b1, 21d
@@ -196,7 +198,7 @@ gantt
     Dishwasher              :k4, after k2, 10d
 ```
 
-**Gantt notes:** **Subpanel** before bath fan. **Countertops** and **sink replace** share the same window (parallel after kitchen circuits); **faucet** after both; **backsplash** after faucet. Parallel tracks elsewhere: subpanel vs structure after dry; washer plumbing vs concrete; after encapsulation, lights rough-in + kitchen strip + outlets; after bath floor tile, surround vs vanity; fan after shower door + subpanel; after door tile, ceiling sand vs cedar patch; backsplash vs dishwasher after counters (DW can stay after counter only). Hired trades shorten **sp**, **wcirc**, **k_elec**. Multi-`after` needs a current Mermaid build.
+**Gantt notes:** **Subpanel** before bath fan and **mini split**. **Mini split** can land any time after subpanel (bar shown after panel only for illustration). **Countertops** and **sink replace** share the same window (parallel after kitchen circuits); **faucet** after both; **backsplash** after faucet. Parallel tracks elsewhere: subpanel vs structure after dry; washer plumbing vs concrete; after encapsulation, lights rough-in + kitchen strip + outlets; after bath floor tile, surround vs vanity; fan after shower door + subpanel; after door tile, ceiling sand vs cedar patch; backsplash vs dishwasher after counters (DW can stay after counter only). Hired trades shorten **sp**, **wcirc**, **k_elec**, **msplit**. Multi-`after` needs a current Mermaid build.
 
 ## Grouping summary
 
@@ -211,6 +213,6 @@ gantt
 | **5B Bathroom** | Strip → tub → heat prep → floor tile → surround → shower door → **exhaust fan** (**subpanel** must be **done before** fan power). Vanity/toilet/trim can run parallel with surround from floor tile. |
 | **6 Kitchen** | Cabinets → **kitchen circuits** (subpanel first). **Countertops** and **sink replacement** in the **same install window** (coordinate with fabricator). **Faucet** after counter + sink. **Backsplash** after faucet. **Dishwasher** after countertop (and circuits). |
 | **8 Ceiling** | **Loft cedar** before shellac; sand → BKF → shellac; **install lights** after shellac **and** after rough-in complete. |
-| **9 Anytime** | **Subpanel first** among these when you add circuits (**fan**, washer, kitchen). Then **light/switch rough-in** (no subpanel for that rough-in alone) and **outlets**. **Installing** lights waits on rough-in + shellac; **washer circuit** needs subpanel + crawl wood; **kitchen circuits** before backsplash/dishwasher. |
+| **9 Anytime** | **Subpanel first** among these when you add circuits (**fan**, washer, kitchen, **mini split**). **Mini split install** any time after subpanel—no other dependency in this map. Then **light/switch rough-in** (no subpanel for that rough-in alone) and **outlets**. **Installing** lights waits on rough-in + shellac; **washer circuit** needs subpanel + crawl wood; **kitchen circuits** before backsplash/dishwasher. |
 
 Adjust links into **K1** if kitchen cabinets must sit on tile vs refinished wood.
