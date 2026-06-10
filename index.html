@@ -292,8 +292,9 @@
       list-style: none;
     }
 
-    .task-browser-list button {
-      width: 100%;
+    .task-browser-list .task-open {
+      flex: 1;
+      width: auto;
       text-align: left;
       font: inherit;
       font-size: 0.95rem;
@@ -306,7 +307,7 @@
       min-height: var(--tap);
     }
 
-    .task-browser-list button:active {
+    .task-browser-list .task-open:active {
       background: #e7e5e4;
     }
 
@@ -317,6 +318,170 @@
       letter-spacing: 0.04em;
       color: var(--muted);
       margin: 0.75rem 0 0.25rem;
+    }
+
+    .progress-summary {
+      margin-top: 1rem;
+      padding: 0.75rem 0.85rem;
+      background: var(--note-bg);
+      border: 1px solid var(--note-border);
+      border-radius: 10px;
+      color: var(--note-ink);
+      font-size: 0.92rem;
+    }
+
+    .progress-summary strong {
+      font-weight: 700;
+    }
+
+    .progress-bar {
+      margin-top: 0.55rem;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(54, 83, 20, 0.15);
+      overflow: hidden;
+    }
+
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .status-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      margin: 0.75rem 0 0.5rem;
+    }
+
+    .status-toolbar .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .status-toolbar button {
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .status-toolbar button.is-active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .status-toolbar .sync-btn {
+      margin-left: auto;
+      color: var(--accent);
+      background: var(--card);
+    }
+
+    .status-toolbar .sync-hint {
+      width: 100%;
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .task-browser-list .task-row {
+      display: flex;
+      gap: 0.4rem;
+      align-items: stretch;
+    }
+
+    .task-browser-list .task-row.is-hidden {
+      display: none;
+    }
+
+    .task-browser-list .task-row.is-done .task-open {
+      color: var(--muted);
+    }
+
+    .task-browser-list .status-pill {
+      flex-shrink: 0;
+      min-width: 5.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.45rem 0.55rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      cursor: pointer;
+      min-height: var(--tap);
+    }
+
+    .status-pill[data-status="in_progress"] {
+      background: #fef3c7;
+      border-color: #fcd34d;
+      color: #92400e;
+    }
+
+    .status-pill[data-status="done"] {
+      background: #ecfccb;
+      border-color: #bef264;
+      color: #365314;
+    }
+
+    .status-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+    }
+
+    .status-picker button {
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .status-picker button.is-active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .status-picker button[data-status="in_progress"].is-active {
+      background: #d97706;
+      border-color: #d97706;
+    }
+
+    .status-picker button[data-status="done"].is-active {
+      background: #4d7c0f;
+      border-color: #4d7c0f;
+    }
+
+    .mermaid g.node.status-done rect,
+    .mermaid g.node.status-done polygon {
+      fill: #ecfccb !important;
+      stroke: #65a30d !important;
+    }
+
+    .mermaid g.node.status-in_progress rect,
+    .mermaid g.node.status-in_progress polygon {
+      fill: #fef3c7 !important;
+      stroke: #d97706 !important;
     }
 
     /* Detail sheet */
@@ -467,6 +632,10 @@
     <header>
       <h1>Cabin remodel</h1>
       <p class="lede">Task order by area. Tap a box in the flowchart or a bar in the Gantt for scope notes—or use the task list on small screens.</p>
+      <div class="progress-summary" id="progress-summary" aria-live="polite">
+        <span id="progress-text">Loading progress…</span>
+        <div class="progress-bar" aria-hidden="true"><span id="progress-fill" style="width: 0%"></span></div>
+      </div>
       <nav aria-label="Sections">
         <a href="#flowchart">Flowchart</a>
         <a href="#gantt">Gantt</a>
@@ -698,7 +867,17 @@ gantt
 
     <section id="task-browser-section" aria-labelledby="task-browser-heading">
       <h2 id="task-browser-heading">All tasks</h2>
-      <p class="note">Same details as tapping the diagrams—useful on a phone if the chart is crowded.</p>
+      <p class="note">Same details as tapping the diagrams—useful on a phone if the chart is crowded. Tap a status pill to update progress; copy JSON to sync via git.</p>
+      <div class="status-toolbar">
+        <div class="filter-group" role="group" aria-label="Filter by status">
+          <button type="button" class="status-filter is-active" data-filter="all">All</button>
+          <button type="button" class="status-filter" data-filter="todo">To do</button>
+          <button type="button" class="status-filter" data-filter="in_progress">In progress</button>
+          <button type="button" class="status-filter" data-filter="done">Done</button>
+        </div>
+        <button type="button" class="sync-btn" id="copy-status-json">Copy status.json</button>
+        <p class="sync-hint">Paste into <code>status.json</code> in the repo, then commit and push.</p>
+      </div>
       <details id="task-browser" open>
         <summary>Browse by name</summary>
         <ul class="task-browser-list" id="task-browser-list"></ul>
@@ -802,10 +981,99 @@ gantt
       e1: { title: "Kitchen strip + fir (Gantt bar)", phase: "Main floors", scope: ["One bar combining F1 and F2 work in the chart", "Strip extra layers then fir patches—see flowchart"] },
     };
 
+    const TRACKED_TASK_IDS = [
+      "D1", "D2", "W1", "W2", "W3", "WPLUMB", "WELEC", "C1", "E1", "E2", "E3",
+      "F0", "F1", "F2", "F3", "F4", "F5", "F6", "TUB", "F7", "F8", "BWT", "SD", "BFAN", "BVF",
+      "K1", "KSVC", "CTOP", "KSINK", "FAUCET", "BACK", "DW", "SP", "MSPLIT", "EL1", "OUT",
+      "CHIM", "CS0", "CS1", "CS2", "LGT",
+    ];
+
+    const STATUS = {
+      todo: { label: "To do", next: "in_progress" },
+      in_progress: { label: "In progress", next: "done" },
+      done: { label: "Done", next: "todo" },
+    };
+    const STORAGE_KEY = "cabin-remodel-status";
+    let taskStatuses = {};
+    let activeStatusFilter = "all";
+    let detailTaskId = null;
+
+    async function loadStatuses() {
+      let fromFile = {};
+      try {
+        const res = await fetch("status.json", { cache: "no-store" });
+        if (res.ok) fromFile = await res.json();
+      } catch (_) {}
+      let fromLocal = {};
+      try {
+        fromLocal = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      } catch (_) {}
+      taskStatuses = { ...fromFile, ...fromLocal };
+    }
+
+    function getStatus(id) {
+      const s = taskStatuses[id];
+      return STATUS[s] ? s : "todo";
+    }
+
+    function setStatus(id, status) {
+      if (!STATUS[status]) return;
+      if (status === "todo") delete taskStatuses[id];
+      else taskStatuses[id] = status;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(taskStatuses));
+      updateProgressSummary();
+      applyFlowchartStatusStyles();
+      refreshTaskListRows();
+      if (detailTaskId === id) renderDetailStatusPicker(id);
+    }
+
+    function cycleStatus(id) {
+      setStatus(id, STATUS[getStatus(id)].next);
+    }
+
+    function exportStatusJson() {
+      const out = {};
+      TRACKED_TASK_IDS.forEach((id) => {
+        const s = getStatus(id);
+        if (s !== "todo") out[id] = s;
+      });
+      return JSON.stringify(out, null, 2) + "\n";
+    }
+
+    function updateProgressSummary() {
+      let done = 0;
+      let inProgress = 0;
+      TRACKED_TASK_IDS.forEach((id) => {
+        const s = getStatus(id);
+        if (s === "done") done += 1;
+        else if (s === "in_progress") inProgress += 1;
+      });
+      const total = TRACKED_TASK_IDS.length;
+      const todo = total - done - inProgress;
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      document.getElementById("progress-text").innerHTML =
+        "<strong>" + done + "</strong> done · <strong>" + inProgress + "</strong> in progress · <strong>" + todo + "</strong> to do";
+      document.getElementById("progress-fill").style.width = pct + "%";
+    }
+
+    function applyFlowchartStatusStyles() {
+      const svg = document.querySelector(".mermaid svg");
+      if (!svg) return;
+      svg.querySelectorAll("g.node").forEach((g) => {
+        const m = (g.id || "").match(FLOW_NODE_RE);
+        if (!m) return;
+        g.classList.remove("status-done", "status-in_progress");
+        const s = getStatus(m[1]);
+        if (s === "done") g.classList.add("status-done");
+        else if (s === "in_progress") g.classList.add("status-in_progress");
+      });
+    }
+
     const FLOW_NODE_RE = /^flowchart-([A-Za-z][A-Za-z0-9_]*)-\d+$/;
 
     function openDetail(id) {
       const resolved = GANTT_TO_FLOW[id] || id;
+      detailTaskId = TASKS[resolved] ? resolved : (TASKS[id] ? id : null);
       const t = TASKS[resolved] || TASKS[id];
       const backdrop = document.getElementById("detail-backdrop");
       const sheet = document.getElementById("detail-sheet");
@@ -827,7 +1095,28 @@ gantt
       }
       titleEl.textContent = t.title;
       phaseEl.textContent = t.phase;
-      bodyEl.innerHTML = "<ul>" + t.scope.map((s) => "<li>" + escapeHtml(s) + "</li>").join("") + "</ul>";
+      let html = "";
+      if (detailTaskId) {
+        html += "<div class=\"status-picker\" role=\"group\" aria-label=\"Task status\" id=\"detail-status-picker\"></div>";
+      }
+      html += "<ul>" + t.scope.map((s) => "<li>" + escapeHtml(s) + "</li>").join("") + "</ul>";
+      bodyEl.innerHTML = html;
+      if (detailTaskId) renderDetailStatusPicker(detailTaskId);
+    }
+
+    function renderDetailStatusPicker(id) {
+      const picker = document.getElementById("detail-status-picker");
+      if (!picker) return;
+      picker.innerHTML = "";
+      Object.entries(STATUS).forEach(([value, meta]) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.dataset.status = value;
+        btn.textContent = meta.label;
+        btn.classList.toggle("is-active", getStatus(id) === value);
+        btn.addEventListener("click", () => setStatus(id, value));
+        picker.appendChild(btn);
+      });
     }
 
     function escapeHtml(s) {
@@ -835,6 +1124,7 @@ gantt
     }
 
     function closeDetail() {
+      detailTaskId = null;
       const backdrop = document.getElementById("detail-backdrop");
       const sheet = document.getElementById("detail-sheet");
       backdrop.classList.remove("visible");
@@ -935,14 +1225,9 @@ gantt
 
     function buildTaskList() {
       const ul = document.getElementById("task-browser-list");
-      const flowOrder = [
-        "D1", "D2", "W1", "W2", "W3", "WPLUMB", "WELEC", "C1", "E1", "E2", "E3",
-        "F0", "F1", "F2", "F3", "F4", "F5", "F6", "TUB", "F7", "F8", "BWT", "SD", "BFAN", "BVF",
-        "K1", "KSVC", "CTOP", "KSINK", "FAUCET", "BACK", "DW", "SP", "MSPLIT", "EL1", "OUT",
-        "CHIM", "CS0", "CS1", "CS2", "LGT",
-      ];
+      ul.innerHTML = "";
       let lastPhase = "";
-      flowOrder.forEach((id) => {
+      TRACKED_TASK_IDS.forEach((id) => {
         const t = TASKS[id];
         if (!t) return;
         if (t.phase !== lastPhase) {
@@ -952,15 +1237,75 @@ gantt
           ph.textContent = t.phase;
           ul.appendChild(ph);
         }
+        const status = getStatus(id);
         const li = document.createElement("li");
+        li.className = "task-row";
+        li.dataset.taskId = id;
+        li.dataset.status = status;
+        if (status === "done") li.classList.add("is-done");
+        if (activeStatusFilter !== "all" && status !== activeStatusFilter) li.classList.add("is-hidden");
+
         const btn = document.createElement("button");
         btn.type = "button";
+        btn.className = "task-open";
         btn.textContent = t.title;
         btn.addEventListener("click", () => openDetail(id));
+
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "status-pill";
+        pill.dataset.status = status;
+        pill.textContent = STATUS[status].label;
+        pill.setAttribute("aria-label", "Status: " + STATUS[status].label + ". Tap to change.");
+        pill.addEventListener("click", (e) => {
+          e.stopPropagation();
+          cycleStatus(id);
+        });
+
         li.appendChild(btn);
+        li.appendChild(pill);
         ul.appendChild(li);
       });
     }
+
+    function refreshTaskListRows() {
+      document.querySelectorAll(".task-browser-list .task-row").forEach((row) => {
+        const id = row.dataset.taskId;
+        const status = getStatus(id);
+        row.dataset.status = status;
+        row.classList.toggle("is-done", status === "done");
+        row.classList.toggle("is-hidden", activeStatusFilter !== "all" && status !== activeStatusFilter);
+        const pill = row.querySelector(".status-pill");
+        if (pill) {
+          pill.dataset.status = status;
+          pill.textContent = STATUS[status].label;
+          pill.setAttribute("aria-label", "Status: " + STATUS[status].label + ". Tap to change.");
+        }
+      });
+    }
+
+    document.querySelectorAll(".status-filter").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeStatusFilter = btn.dataset.filter;
+        document.querySelectorAll(".status-filter").forEach((b) => b.classList.toggle("is-active", b === btn));
+        refreshTaskListRows();
+      });
+    });
+
+    document.getElementById("copy-status-json").addEventListener("click", async () => {
+      const text = exportStatusJson();
+      const btn = document.getElementById("copy-status-json");
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "Copied!";
+      } catch (_) {
+        btn.textContent = "Copy failed — see console";
+        console.log(text);
+      }
+      setTimeout(() => {
+        btn.textContent = "Copy status.json";
+      }, 2000);
+    });
 
     document.getElementById("detail-close").addEventListener("click", closeDetail);
     document.getElementById("detail-backdrop").addEventListener("click", closeDetail);
@@ -1087,6 +1432,7 @@ gantt
       },
     });
 
+    await loadStatuses();
     await mermaid.run({ querySelector: ".mermaid" });
 
     initDiagramZooms();
@@ -1096,6 +1442,8 @@ gantt
     if (svgs[1]) wireGantt(svgs[1]);
 
     buildTaskList();
+    updateProgressSummary();
+    applyFlowchartStatusStyles();
   </script>
 </body>
 </html>
